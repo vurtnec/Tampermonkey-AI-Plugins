@@ -218,8 +218,8 @@
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer YOUR_OPENROUTER_API_KEY", // Replace with your OpenRouter API key
-                "HTTP-Referer": "https://github.com/", // Replace with your site
-                "X-Title": "Translation Tool" // Replace with your app name
+                "HTTP-Referer": "https://vurtnec.github.io/", // Replace with your site
+                "X-Title": "Tampermonkey Translation Tool" // Replace with your app name
             },
             onload: function (response) {
                 if (response.status === 200) {
