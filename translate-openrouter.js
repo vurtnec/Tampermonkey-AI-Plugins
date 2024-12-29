@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         OpenRouter Text Summarizer
+// @name         OpenRouter Translator
 // @namespace    http://tampermonkey.net/
 // @version      1.2
-// @description  Send selected text to OpenRouter for summarization
+// @description  Send selected text to OpenRouter for translation
 // @author       Vurtnec
 // @match        *://*/*
 // @grant        GM_registerMenuCommand
@@ -148,11 +148,10 @@
         popup.id = 'ollama-popup';
         popup.innerHTML = `
             <span id="ollama-popup-close">×</span>
-            <h2>Text Summary</h2>
+            <h2>Translation</h2>
             <div id="ollama-popup-content">
                 <div class="loading-container">
                     <div class="loading-spinner"></div>
-                    <div class="loading-text">Generating summary<span class="loading-dots"></span></div>
                 </div>
             </div>
         `;
@@ -183,11 +182,11 @@
         }, 300);
     }
 
-    // Function to show summary
-    function showSummary(text) {
+    // Function to show translation
+    function showTranslation(text) {
         const existingPopup = document.getElementById('ollama-popup');
         const contentElement = existingPopup.querySelector('#ollama-popup-content');
-        contentElement.innerHTML = `<div class="summary-content">${text}</div>`;
+        contentElement.innerHTML = `<div class="translation-content">${text}</div>`;
     }
 
     // Send text to OpenRouter
@@ -203,11 +202,11 @@
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a text summarization assistant. Your task is to provide clear, concise summaries of the given text while maintaining the key points and important details. Keep the summary focused and well-structured. Regardless of the language of the input text, please reply in Chinese."
+                    "content": "You are a highly skilled translation engine with expertise in the IT technology sector. Your function is to translate texts accurately into Chinese, maintaining the original format, technical terms, and abbreviations. Do not add any explanations or annotations to the translated text."
                 },
                 {
                     "role": "user",
-                    "content": `Please summarize the following text:\n\n${text} \n Regardless of the language of the input text, please reply in Chinese.`
+                    "content": text
                 }
             ]
         };
@@ -220,7 +219,7 @@
                 "Content-Type": "application/json",
                 "Authorization": "Bearer YOUR_OPENROUTER_API_KEY", // Replace with your OpenRouter API key
                 "HTTP-Referer": "https://github.com/", // Replace with your site
-                "X-Title": "Text Summarizer" // Replace with your app name
+                "X-Title": "Translation Tool" // Replace with your app name
             },
             onload: function (response) {
                 if (response.status === 200) {
@@ -228,45 +227,45 @@
                         const responseData = JSON.parse(response.responseText);
                         const messageContent = responseData.choices[0]?.message?.content;
                         if (messageContent) {
-                            showSummary(messageContent);
+                            showTranslation(messageContent);
                         } else {
-                            showSummary("No summary content received.");
+                            showTranslation("No translation content received.");
                         }
                     } catch (error) {
-                        showSummary("Error parsing OpenRouter response.");
+                        showTranslation("Error parsing OpenRouter response.");
                     }
                 } else {
-                    showSummary(`OpenRouter Error: ${response.statusText}`);
+                    showTranslation(`OpenRouter Error: ${response.statusText}`);
                 }
             },
             onerror: function () {
-                showSummary("Failed to connect to OpenRouter. Please check your internet connection.");
+                showTranslation("Failed to connect to OpenRouter. Please check your internet connection.");
             },
         });
     }
 
     // Register context menu
-    GM_registerMenuCommand("Summarize Text", () => {
+    GM_registerMenuCommand("OpenRouter Translator", () => {
         const selectedText = window.getSelection().toString();
 
         if (selectedText) {
             sendToOpenRouter(selectedText);
         } else {
-            showSummary("No text selected. Please select some text first.");
+            showTranslation("No text selected. Please select some text first.");
         }
     });
 
     // Add keyboard shortcut
     document.addEventListener('keydown', (event) => {
-        // Mac: Option + S (altKey for Mac's Option key)
-        if (event.altKey && event.code === 'KeyS') {
+        // Mac: Option + Q (altKey for Mac's Option key)
+        if (event.altKey && event.code === 'KeyQ') {
             const selectedText = window.getSelection().toString();
 
             if (selectedText) {
                 sendToOpenRouter(selectedText);
             } else {
-                showSummary("No text selected. Please select some text first.");
+                showTranslation("No text selected. Please select some text first.");
             }
         }
     });
-})();
+})(); 
